@@ -121,8 +121,6 @@
         return validatenull(val);
       },
       open (item) {
-        // console.log(item)
-        // console.log(item)当前点击的菜单详情
         if (this.screen <= 1) this.$store.commit("SET_COLLAPSE");
         this.$router.$avueRouter.group = item.group;
         this.$router.$avueRouter.meta = item.meta;

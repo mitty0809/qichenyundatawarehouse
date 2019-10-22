@@ -103,7 +103,7 @@
           column: [
             {
               label: "客户名称",
-              prop: "username",
+              prop: "usedname",
             },
             {
               label: "客户手机号",
@@ -233,13 +233,8 @@
       handleChange(file, fileLis) {
         this.$export.xlsx(file.raw)
           .then(data => {
-            // console.log(data)
+            console.log(data)
             this.data = data.results;
-            this.data.forEach(item =>{
-              this.list.push(item)
-            })
-            console.log(this.list)
-            // console.log(this.list)
           })
       },
       // 下载模板

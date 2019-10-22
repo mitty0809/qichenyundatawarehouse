@@ -269,6 +269,15 @@ export default [{
     },
     component: () =>
       import( /* webpackChunkName: "views" */ '@/views/util/member')
-  }
+  },
+  // {
+  //   path: 'import',
+  //   name: 'Excel上传',
+  //   meta: {
+  //     i18n: 'import'
+  //   },
+  //   component: () =>
+  //     import( /* webpackChunkName: "views" */ '@/views/util/import')
+  // }
 ]
 }]

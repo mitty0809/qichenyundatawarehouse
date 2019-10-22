@@ -31,8 +31,8 @@
     },
     created () {
       this.$store.dispatch("GetUserMenu").then(data => {
-      console.log(data)
-      console.log(this.menu)
+      // console.log(data)
+      // console.log(this.menu)
       if (data.length === 0) return;
       this.$router.$avueRouter.formatRoutes(data, true);
     });

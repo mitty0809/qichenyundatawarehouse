@@ -353,15 +353,6 @@
                 getMenutree().then(res => {
                     this.data = res.data.data
                     DIC.TREE = this.data
-                    if (res.data.code === 0) {
-                        this.$store.dispatch("GetMenu").then(res => {
-                            console.log(res)
-
-                        }).catch(error => {
-                            console.log(error)
-
-                        })
-                    }
                 }).catch(error => {
                     console.log(error)
                 })
@@ -469,12 +460,12 @@
                     menucompile(this.form.id, this.form.parentId, this.form.name, this.form.menuType, this.form.icon, this.form.path,this.form.component).then(res => {
                         this.getTree()
                         if (res.data.code === 0) {
-                            this.$store.dispatch("GetUserMenu").then(data => {
-                                console.log(data)
+                            // this.$store.dispatch("GetUserMenu").then(data => {
+                                // console.log(data)
                                 // if(data.data.code===0){
                                     this.$notify.success({ title: '编辑', message: '编辑菜单成功' });
                                 // }
-                            });
+                            // });
                         }
                     }).catch(error => {
                         console.log(error)

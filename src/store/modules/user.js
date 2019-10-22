@@ -200,7 +200,7 @@ const user = {
                     // console.log(res)
                     const data =res.data.data
                     let menu = deepClone(data)
-                    console.log(menu)
+                    // console.log(menu)
                     // menu.forEach((item) => {
                     //     replaceDoc(item, state.permission);
                     // });

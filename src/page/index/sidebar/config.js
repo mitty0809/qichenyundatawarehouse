@@ -3,6 +3,7 @@ export default {
         label: 'label',
         path: 'path',
         icon: 'icon',
-        children: 'children'
+        children: 'children',
+        component:'component'
     }
 }

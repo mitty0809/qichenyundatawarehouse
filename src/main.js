@@ -21,6 +21,9 @@ import './styles/common.scss';
 import basicBlock from './components/basic-block/main'
 import basicContainer from './components/basic-container/main'
 
+import XLSX from 'xlsx'
+Vue.use(XLSX)
+
 Vue.use(router)
 Vue.use(VueAxios, axios)
 Vue.use(Element, {

@@ -328,6 +328,7 @@ export const getTree = (treeData, parentId) => {
                 id:node.id, 
                 title:node.name,
                 path:node.path,
+                component:node.component,
                 parentId:node.parentId,
                 children: getTree(treeData, node.id) 
                 
