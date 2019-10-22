@@ -246,6 +246,9 @@
                     }
                 }).catch(error => {
                     console.log(error)
+                    // if(error.data.code===400){
+                    //     this.hint('添加', '添加角色失败')
+                    // }
                     this.hint('添加', '添加角色失败')
                 })
                 done()

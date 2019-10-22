@@ -236,6 +236,39 @@ export default [{
     },
     component: () =>
       import( /* webpackChunkName: "views" */ '@/views/user/notice')
+  },
+  {
+    path: 'logs',
+    name: '员工管理',
+    meta: {
+      i18n: 'logs'
+    },
+    component: () =>
+      import( /* webpackChunkName: "views" */ '@/views/util/logs')
+  },{
+    path: 'permission',
+    name: '系统配置',
+    meta: {
+      i18n: 'permission'
+    },
+    component: () =>
+      import( /* webpackChunkName: "views" */ '@/views/util/permission')
+  },{
+    path: 'organizationalstructure',
+    name: '组织架构',
+    meta: {
+      i18n: 'permission'
+    },
+    component: () =>
+      import( /* webpackChunkName: "views" */ '@/views/util/organizationalstructure')
+  },{
+    path: 'member',
+    name: '会员管理',
+    meta: {
+      i18n: 'member'
+    },
+    component: () =>
+      import( /* webpackChunkName: "views" */ '@/views/util/member')
   }
 ]
 }]

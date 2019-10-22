@@ -9,12 +9,12 @@ import axios from 'axios'
 import store from '@/store/';
 import router from '@/router/router'
 import { serialize } from '@/util/util'
-import { getToken,setToken } from '@/util/auth'
+import { getToken, setToken } from '@/util/auth'
 import { Message } from 'element-ui'
 import website from '@/config/website';
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import {Loading} from 'element-ui'
+import { Loading } from 'element-ui'
 // import {qq} from '@/api/user'
 // let loading;
 // function startLoading() {    
@@ -57,7 +57,7 @@ axios.interceptors.request.use(config => {
     if (getToken() && !isToken) {
         config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带token--['Authorization']为自定义key 请根据实际情况自行修改
     }
-    
+
     //headers中配置serialize为true开启序列化
     if (config.method === 'post' && meta.isSerialize === true) {
         config.data = serialize(config.data);
@@ -67,7 +67,7 @@ axios.interceptors.request.use(config => {
     //   })
     // axios(config)
     return config
-    
+
 }, error => {
     // setTimeout(() => {
     //     Vue.$vux.loading.hide();
@@ -89,7 +89,7 @@ axios.interceptors.response.use(res => {
     // if(res.status ===200 ){
     //     console.log('200')
     // };
-    
+
     //如果在白名单里则自行catch逻辑处理
     if (statusWhiteList.includes(status)) return Promise.reject(res);
     //如果是401则跳转到登录页面
@@ -101,13 +101,34 @@ axios.interceptors.response.use(res => {
         })
         return Promise.reject(new Error(message))
     };
-    if (status ===535){
-        console.log('535')
+    if (status === 535) {
+        setToken(res.data.data.token)
+        return axios(res.config)
     };
+    // if (status === 700) {
+    //     Message({
+    //         message: '租户标识已经存在',
+    //         type: 'error'
+    //     })
+    //     return Promise.reject(new Error(message))
+    // }
+    // if (status === 715) {
+    //     Message({
+    //         message: '字典名称已存在',
+    //         type: 'error'
+    //     })
+    //     return Promise.reject(new Error(message))
+    // } else {
+    //     Message({
+    //         message: res.data.msg,
+    //         type: 'error'
+    //     })
+    //     return Promise.reject(new Error(message))
+    // };
     // 如果请求为非200否者默认统一处理
     if (status !== 200) {
         Message({
-            message: message,
+            message: res.data.msg,
             type: 'error'
         })
         return Promise.reject(new Error(message))
@@ -118,7 +139,7 @@ axios.interceptors.response.use(res => {
     // debugger
     // if()
     // axios(error.config)
-    if(error.response.data.code===535){
+    if (error.response.data.code === 535) {
         debugger
         // axios(error.config)
         setToken(error.response.data.data.token)
@@ -130,7 +151,7 @@ axios.interceptors.response.use(res => {
         // }).catch(error => {
         //     console.log(error)
         // })
-    }else{
+    } else {
         // setTimeout(() => {
         //     Vue.$vux.loading.hide()
         //     Vue.$vux.toast.text('请求失败', 'middle')
@@ -139,7 +160,7 @@ axios.interceptors.response.use(res => {
         NProgress.done();
         return Promise.reject(new Error(error));
     }
-    
+
 })
 
 export default axios;

@@ -134,7 +134,11 @@
                         dicData: DIC.tree,
                         rules: [
                             { required: true, message: '所属机构不能为空', trigger: 'blur' }
-                        ]
+                        ],
+                        proprs:{
+                            label:'name',
+                            value:'id'
+                        }
                     }, {
                         label: '性别',
                         prop: 'gender',
@@ -258,16 +262,21 @@
                 });
                 adduser(form.username, form.nickname, user1.password, form.deptId, form.roles, form.mobile, form.email, form.gender, form.birthday).then(res => {
                     this.getlist()
-                    console.log(form)
                     this.form.roles=form.roles
                     this.form.deptId=form.deptId
                     if(res.data.code===0){
                         this.$notify.success({ title: '添加成功', message: '添加用户成功！' });
                         loading()
-                    }
+                    } 
+                    // if(res.data.code===400){
+                    //     this.$notify.success({ title: '添加', message: '用户名已存在' });
+                    // }
                 }).catch(error => {
                     console.log(error)
                     this.$notify.success({ title: '添加失败', message: '添加用户失败！' });
+                    if(error.data.code === 400){
+                        this.$notify.success({ title: '添加', message: error.data.msg });
+                    } 
                 })
                 
                 
@@ -352,7 +361,7 @@
                 // this.$refs.crud.rowEdit(row, index);
             },
             // 删除用户
-            rowDel(form,index){
+            rowDel(form){
                 console.log(form)
             }
         }

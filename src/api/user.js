@@ -514,7 +514,7 @@ export const updatenotice = (id,title,content,endDate) => request({
 })
 // 获取客户信息
 export const getinfo = (assetId) => request({
-    url:baseUrl + 'open/asset/info' + assetId,
+    url:baseUrl + 'open/asset/info/' + assetId,
     method:'get',
 })
 

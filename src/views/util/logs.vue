@@ -27,7 +27,6 @@
           column: [{
             label: '员工名称',
             prop: 'name',
-            search: true,
           }, {
             label: '员工编码',
             prop: 'name',

@@ -172,7 +172,6 @@
         methods: {
             onLoad(page) {
                 this.page = page
-                console.log(this.page)
                 getDictList(this.searchContent, this.page.currentPage).then(res => {
                     this.pagedata = res.data.data
                     this.page.total = this.pagedata.total
@@ -240,8 +239,6 @@
             // 新增字典项
             rowSaveitem(form, done) {
                 debugger
-                console.log(this.dictId)
-                console.log(form)
                 addDictitem(this.dictId, form.itemName, form.itemValue, form.seq, form.remark).then(res => {
                     this.itemdata = res.data.data
                     this.itemlist(this.dictId)
@@ -264,13 +261,6 @@
                 this.dictlist()
                 // this.$message.success('search callback' + JSON.stringify(Object.assign(params, this.searchForm)))
             },
-            // searchChange1(params){
-            //     console.log(params)
-            //     if(params.itemName){
-
-            //     }
-
-            // },
             //修改字典项
             itemrowUpdate(form, index, done) {
                 updateDictitem(form.id, form.itemName, form.seq, form.remark).then(res => {

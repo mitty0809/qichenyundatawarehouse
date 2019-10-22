@@ -30,7 +30,7 @@
       </template>
     </avue-form>
     <!-- 客户列表 -->
-    <avue-crud :option="optiontable" :page="page" :data="data" @on-load="onLoad">
+    <avue-crud :option="optiontable" :page="page" :data="list" @on-load="onLoad">
       <template slot="menu" slot-scope="scope">
         <el-button :size="scope.size" :type="scope.type" @click="handleForm">详情</el-button>
       </template>
@@ -52,6 +52,7 @@
       return {
         // list: [],
         clearble: false,
+        assetId:1,
         show: false,
         // option2: {
         //             column: [{
@@ -69,23 +70,23 @@
           total: 122,
         },
         data: [
-          {
-            username: "张三",
-            cellphone: "17230129549",
-            idnumber: "412829199808092345",
-            loanamount: '90.00',
-            businessspecialist: "嘻嘻",
-            businesstype: "直租",
-            organisation: "业务一部"
-          }, {
-            username: "李四",
-            cellphone: "17230129549",
-            idnumber: "412829199808092345",
-            loanamount: '90.00',
-            businessspecialist: "嘻嘻",
-            businesstype: "直租",
-            organisation: "业务二部"
-          }
+          // {
+          //   username: "张三",
+          //   cellphone: "17230129549",
+          //   idnumber: "412829199808092345",
+          //   loanamount: '90.00',
+          //   businessspecialist: "嘻嘻",
+          //   businesstype: "直租",
+          //   organisation: "业务一部"
+          // }, {
+          //   username: "李四",
+          //   cellphone: "17230129549",
+          //   idnumber: "412829199808092345",
+          //   loanamount: '90.00',
+          //   businessspecialist: "嘻嘻",
+          //   businesstype: "直租",
+          //   organisation: "业务二部"
+          // }
         ],
         optiontable: {
           selection: true,
@@ -134,6 +135,7 @@
         },
 
         form: {},
+        list:[],
         option: {
           labelWidth: 80,
           submitBtn: true,//控制提交按钮是否显示
@@ -191,15 +193,17 @@
       };
     },
     created() {
-      // 获取客户所有信息client客户
-      // getinfo().then(res => {
-      //   console.log(res)
-      // }).catch(error => {
-      //   console.log(error)
-      // })
-      // console.log('第一次进入页面')
+     this.getclientinfo()
     },
     methods: {
+      // 获取客户信息
+      getclientinfo(){
+        getinfo(this.assetId).then(res => {
+          console.log(res)
+        }).catch(error => {
+          console.log(error)
+        })
+      },
       // 点击详情查询对应信息
       handleForm() {
         this.$router.push({
@@ -213,30 +217,35 @@
       },
       // 表单查询提交回调
       handleSubmit(form, done) {
+        console.log(form)
         // this.$message.success('当前数据' + JSON.stringify(this.form));
-        console.log('点击查询按钮')
+        // console.log('点击查询按钮')
         done()
       },
       // 分页信息首次加载
       onLoad(page) {
         this.page=page
         // 获取客户全部信息
-        // getinfo().then(res => {
-        //   console.log(res)
-        // }).catch(error => {
-        //   console.log(error)
-        // })
+        this.getclientinfo()
+        // console.log(this.list)
       },
       // 导入Excel
       handleChange(file, fileLis) {
         this.$export.xlsx(file.raw)
           .then(data => {
-            this.list = data.results;
+            // console.log(data)
+            this.data = data.results;
+            this.data.forEach(item =>{
+              this.list.push(item)
+            })
+            console.log(this.list)
+            // console.log(this.list)
           })
       },
       // 下载模板
       handleGet() {
-        window.open('/cdn/demo.xlsx')
+        // window.open('/cdn/demo.xlsx')
+        window.open('../../demo.xlsx')
         console.log('下载地址')
       },
     }
