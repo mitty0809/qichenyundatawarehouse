@@ -106,7 +106,7 @@
       methods: {
         // 点击树形节点的回调
         handleNodeClick(data) {
-          console.log(data.path);
+          // console.log(data.path);
           this.$router.push(data.path)
         }
       }

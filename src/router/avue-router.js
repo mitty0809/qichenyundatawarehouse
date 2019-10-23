@@ -214,12 +214,14 @@ RouterPlugin.install = function (vue, router, store, i18n) {
       safe: this,
       // 设置标题
       setTitle: (title) => {
+        //   console.log(title)
           const defaultTitle = this.$vue.$t('title');
           title = title ? `${title}——${defaultTitle}` : defaultTitle;
           document.title = title;
       },
       closeTag: (value) => {
           let tag = value || this.$store.getters.tag;
+          console.log(value)
           if (typeof value === 'string') {
               tag = this.$store.getters.tagList.filter(ele => ele.value === value)[0]
           }
@@ -268,8 +270,10 @@ RouterPlugin.install = function (vue, router, store, i18n) {
       },
       //动态路由
       formatRoutes: function (aMenu = []) {
+        //   console.log(aMenu)
           const aRouter = []
           const propsConfig = this.$website.menu.props;
+        //   console.log(propsConfig)
           // 拿到字段名称
           const propsDefault = {
               label: propsConfig.label || 'label',
@@ -281,7 +285,7 @@ RouterPlugin.install = function (vue, router, store, i18n) {
           if (aMenu.length === 0) return;
 
           // 循环
-          console.log(aMenu)
+        //   console.log(aMenu)
           for (let i = 0; i < aMenu.length; i++) {
               const oMenu = aMenu[i];
               // 已经包含在内 停止注册

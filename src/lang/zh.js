@@ -57,7 +57,7 @@ export default {
     dashboard: '首页',
     more: '更多',
     tags: '标签',
-    store: '数据查询',
+    crudform: '数据查询',
     api: '全局函数',
     logs: '日志监控',
     table: '表格',

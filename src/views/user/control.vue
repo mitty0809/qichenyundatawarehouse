@@ -8,9 +8,17 @@
                     <div class="el-card__body">
                         <avue-crud :option="option" :data="data" @search-change="searchChange" @row-update="rowUpdate"
                             @row-click="rowclick" @row-save="rowSave" v-model="form" @selection-change="selectchange"
-                            :page="page" @on-load="onLoad" @refresh-change="refreshchange" ref="crud" @row-del="rowDel" :table-loading="loading">
+                            :page="page" @on-load="onLoad" @refresh-change="refreshchange" ref="crud" @row-del="rowDel"
+                            :table-loading="loading">
                             <template slot="menuLeft">
                                 <el-button type="primary" size="small" @click="setpwd">重置密码</el-button>
+                            </template>
+                            <template slot="search">
+                                <el-col :md="6" :xs="24">
+                                    <el-form-item label="搜索内容">
+                                        <el-input placeholder="用户名/昵称/手机号" size="small" v-model="searchForm.solt" />
+                                    </el-form-item>
+                                </el-col>
                             </template>
                         </avue-crud>
                     </div>
@@ -55,7 +63,7 @@
                     gender: '',
                     birthday: ''
                 },
-                loading:true,
+                loading: true,
                 mobile: '',
                 searchForm: {},
                 data: [],
@@ -72,6 +80,7 @@
                 option: {
                     selection: true,
                     viewBtn: true,
+                    searchShow: false,
                     gutter: 60,
                     column: [{
                         label: '用户名',
@@ -85,7 +94,7 @@
                     }, {
                         label: '昵称',
                         prop: 'nickname',
-                        search: true,
+                        // search: true,
                         span: 10,
                         row: false,
                         required: true,
@@ -99,7 +108,7 @@
                     }, {
                         label: '手机号',
                         prop: 'mobile',
-                        type:'phone',
+                        type: 'phone',
                         span: 10,
                         row: false,
                         // rules: [{ validator: validatePhone, trigger: 'blur' }]
@@ -131,14 +140,15 @@
                         span: 10,
                         row: false,
                         type: 'tree',
-                        dicData: DIC.tree,
+                        // dicData: DIC.tree,
                         rules: [
                             { required: true, message: '所属机构不能为空', trigger: 'blur' }
                         ],
-                        proprs:{
-                            label:'name',
-                            value:'id'
-                        }
+                        props: {
+                            label: 'name',
+                            value: 'id'
+                        },
+                        dicUrl: 'https://dev.qichenyun.com/dw/org/tree'
                     }, {
                         label: '性别',
                         prop: 'gender',
@@ -188,36 +198,6 @@
                 console.log(error)
             })
         },
-        mounted() {
-            // 获取所属部门的下拉选项
-            // console.log('打开页面')
-            orgtree().then(res => {
-                // console.log(res)
-                DIC.tree = res.data.data
-                DIC.tree.forEach(item => {
-                    item.label = item.name
-                    item.value = item.id
-                    if (item.children.length == 0) {
-                    } else {
-                        item.children.forEach(item => {
-                            item.label = item.name
-                            item.value = item.id
-                            if (item.children.length == 0) {
-                            } else {
-                                item.children.forEach(item => {
-                                    item.label = item.name
-                                    item.value = item.id
-                                    if (item.children.length == 0) {
-                                    }
-                                })
-                            }
-                        })
-                    }
-                })
-            }).catch(error => {
-                console.log(error)
-            })
-        },
         methods: {
             // 用户管理分页
             onLoad(page) {
@@ -225,8 +205,8 @@
                 getuserlist(this.searchContent, this.page.currentPage, this.page.pageSize).then(res => {
                     this.page.total = res.data.data.total
                     this.data = res.data.data.content
-                    this.loading=false
-                    if(res.data.code!==0){
+                    this.loading = false
+                    if (res.data.code !== 0) {
                         this.$notify.success({ title: '获取失败', message: '获取用户列表失败！' });
                     }
                 }).catch(error => {
@@ -235,7 +215,7 @@
             },
             // 查询用户信息
             searchChange(params) {
-                this.searchContent = params.nickname
+                this.searchContent = this.searchForm.solt
                 this.getlist()
             },
             //   获取用户列表
@@ -243,16 +223,13 @@
                 getuserlist(this.searchContent, this.page.currentPage, this.page.pageSize).then(res => {
                     this.userdata = res.data.data
                     this.data = this.userdata.content
-                    this.loading=false
-                    if(res.data.code===0){
-                        this.$notify.success({ title: '刷新', message: '刷新成功' });
-                    }
+                    this.loading = false
                 }).catch(error => {
                     console.log(error)
                 })
             },
             // 新增用户
-            rowSave(form, done,loading) {
+            rowSave(form, done, loading) {
                 this.addrow = form
                 const user1 = encryption({
                     data: form,
@@ -260,33 +237,37 @@
                     key: 'avue',
                     param: ['password']
                 });
+                this.form=form
+                this.form.deptId=form.deptId
                 adduser(form.username, form.nickname, user1.password, form.deptId, form.roles, form.mobile, form.email, form.gender, form.birthday).then(res => {
                     this.getlist()
-                    this.form.roles=form.roles
-                    this.form.deptId=form.deptId
-                    if(res.data.code===0){
+                    this.form.roles = form.roles
+                    this.form.deptId = form.deptId
+                    if (res.data.code === 0) {
                         this.$notify.success({ title: '添加成功', message: '添加用户成功！' });
                         loading()
-                    } 
+                    }
                     // if(res.data.code===400){
                     //     this.$notify.success({ title: '添加', message: '用户名已存在' });
                     // }
                 }).catch(error => {
                     console.log(error)
                     this.$notify.success({ title: '添加失败', message: '添加用户失败！' });
-                    if(error.data.code === 400){
+                    if (error.data.code === 400) {
                         this.$notify.success({ title: '添加', message: error.data.msg });
-                    } 
+                    }
                 })
-                
-                
+
+
                 done()
             },
             // 修改用户信息
             rowUpdate(form, index, done) {
+                console.log(form)
+                this.form=form
                 updateuser(form.id, form.nickname, form.deptId, form.roles, form.mobile, form.email, form.gender, form.birthday).then(res => {
                     this.getlist()
-                    if(res.data.code===0){
+                    if (res.data.code === 0) {
                         this.$notify.success({ title: '修改成功', message: '修改用户成功！' });
                     }
                 }).catch(error => {
@@ -343,7 +324,7 @@
             },
             setpwd() {
                 resetpwd(this.ids).then(res => {
-                    if(res.data.code===0){
+                    if (res.data.code === 0) {
                         this.$notify.success({ title: '重置', message: '当前选择用户密码重置成功' });
                     }
                 }).catch(error => {
@@ -361,7 +342,7 @@
                 // this.$refs.crud.rowEdit(row, index);
             },
             // 删除用户
-            rowDel(form){
+            rowDel(form) {
                 console.log(form)
             }
         }

@@ -28,7 +28,7 @@
       <el-dropdown class="avue-tags__menu">
         <el-button type="primary"
                    size="mini">
-          {{$t('tagsView.menu')}}
+          <!-- {{$t('tagsView.menu')}} -->
           <i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">
@@ -53,7 +53,12 @@ export default {
       contextmenuFlag: false
     };
   },
-  created () { },
+  created () {
+    // console.log(this.tagWel)
+    console.log(this.tagList)
+    // console.log(this.tag)
+    // console.log(this.watchContextmenu)
+   },
   mounted () {
     this.setActive();
   },
@@ -76,6 +81,7 @@ export default {
   },
   methods: {
     generateTitle (item) {
+      // console.log(item)
       return this.$router.$avueRouter.generateTitle(
         item.label,
         (item.meta || {}).i18n
@@ -108,6 +114,7 @@ export default {
     //激活当前选项
     setActive () {
       this.active = this.tag.value;
+      console.log(this.active)
     },
     menuTag (value, action) {
       if (action === "remove") {
@@ -121,18 +128,19 @@ export default {
     },
     openTag (item) {
       let tag;
-      if (item.name) {
-        tag = this.findTag(item.name).tag;
-      } else {
-        tag = item;
-      }
-      this.$router.push({
-        path: this.$router.$avueRouter.getPath({
-          name: tag.label,
-          src: tag.value
-        },tag.meta),
-        query: tag.query
-      });
+      // console.log(item)
+      // if (item.name) {
+      //   tag = this.findTag(item.name).tag;
+      // } else {
+      //   tag = item;
+      // }
+      // this.$router.push({
+      //   path: this.$router.$avueRouter.getPath({
+      //     name: tag.label,
+      //     src: tag.value
+      //   },tag.meta),
+      //   query: tag.query
+      // });
     },
     closeOthersTags () {
       this.contextmenuFlag = false;
@@ -147,6 +155,7 @@ export default {
         }
       });
       return { tag: tag, key: key };
+      console.log(this.tagList)
     },
     closeAllTags () {
       this.contextmenuFlag = false;

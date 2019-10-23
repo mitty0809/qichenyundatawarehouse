@@ -345,6 +345,9 @@
                 }
             };
         },
+        created(){
+            
+        },
         methods: {
             handleForm() {
                 this.$router.push({

@@ -41,7 +41,17 @@ const navs = {
             state.tag = action;
             setStore({ name: 'tag', content: state.tag, type: 'session' })
             if (state.tagList.some(ele => diff(ele, action))) return
-            state.tagList.push(action)
+            console.log(action)
+            if(action.meta.i18n){
+                state.tagList.push(action)
+            }else{
+                // const action ={
+                //     close:true,
+                //     label:"数据查询",
+                //     value:"/util"
+                // }
+                // state.tagList.push(action)
+            }
             setFistTag(state.tagList);
             setStore({ name: 'tagList', content: state.tagList, type: 'session' })
         },

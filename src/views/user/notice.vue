@@ -7,17 +7,14 @@
                     <!---->
                     <div class="el-card__body">
                         <avue-crud :option="option" :data="data" @search-change="searchChange" @row-save="rowSave"
-                        @refresh-change="refresh" @row-update="rowUpdate">
-                            <!-- <template slot="search">
+                        @refresh-change="refresh" @row-update="rowUpdate" :page="page" @on-load="onLoad">
+                        <template slot="search">
                                 <el-col :md="6" :xs="24">
-                                    <el-form-item label="自定义">
-                                        <el-input placeholder="自定义搜索" size="small" v-model="searchForm.solt" />
-                                    </el-form-item>
+                                  <el-form-item label="搜索内容">
+                                    <el-input placeholder="标题/内容" size="small" v-model="searchForm.solt" />
+                                  </el-form-item>
                                 </el-col>
-                            </template>
-                            <template slot="searchMenu">
-                                <el-button size="small">自定义按钮</el-button>
-                            </template> -->
+                              </template>
                         </avue-crud>
                     </div>
                 </div>
@@ -32,14 +29,16 @@
             return {
                 obj: {},
                 searchForm: {},
-                data: [
-                ],
+                data: [],
                 searchContent: '',
+                page:{
+                    pageSize: 1
+                },
+                pagedata:{},
                 option: {
-                    title: '公告管理',
-                    page: false,
                     align: 'center',
-                    menuAlign: 'center',
+                    // menuAlign: 'center',
+                    searchShow:false,
                     column: [{
                         label: 'id',
                         prop: 'id',
@@ -50,11 +49,13 @@
                     {
                         label: '标题',
                         prop: 'title',
-                        search: true,
+                        row:false
+                        // search: true,
                     },
                     {
                         label: '内容',
-                        prop: 'content'
+                        prop: 'content',
+                        type:'textarea'
                     }, {
                         label: "日期",
                         prop: "endDate",
@@ -89,24 +90,24 @@
             this.listnotice()
         },
         methods: {
+            // 获取公告列表
             listnotice() {
-                noticelist(this.searchContent).then(res => {
-                    console.log(res)
+                noticelist(this.searchContent,this.page.currentPage,this.page.pageSize).then(res => {
                     this.data=res.data.data.content
+                    this.page.total=res.data.data.total
                 }).catch(error => {
                     console.log(error)
                 })
             },
+            // 搜索
             searchChange(params) {
-                console.log(params)
-                this.searchContent=params.title
+                this.searchContent= this.searchForm.solt
                 this.listnotice()
-                this.$message.success('search callback' + JSON.stringify(Object.assign(params, this.searchForm)))
+                // this.$message.success('search callback' + JSON.stringify(Object.assign(params, this.searchForm)))
             },
+            // 添加公告
             rowSave(form, done) {
-                console.log(form)
                 addnotice(form.title, form.content, form.endDate).then(res => {
-                    console.log(res)
                     if(res.data.code===0){
                         this.listnotice()
                     }
@@ -115,15 +116,14 @@
                 })
                 done()
             },
+            // 刷新
             refresh(){
                 this.searchContent=''
                 this.listnotice()
             },
             // 更新公告
             rowUpdate(form,index,done){
-                console.log(form)
                 updatenotice(form.id,form.title,form.content,form.endDate).then(res => {
-                    console.log(res)
                     if(res.data.code===0){
                         this.listnotice()
                     }
@@ -131,7 +131,12 @@
                     console.log(error)
                 })
                 done()
-
+            },
+            // 分页
+            onLoad(page){
+                this.page=page
+                this.page.pageSizes=[1]
+                this.listnotice()
             }
         }
     }

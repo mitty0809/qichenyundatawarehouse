@@ -176,36 +176,45 @@ const user = {
             })
         },
         //获取系统菜单
-        GetMenu({ commit,state }) {
-            return new Promise((resolve,reject) => {
-                getMenu().then((res) => {
-                    if(res.data.code === 0) {
-                        const data = res.data.data;
-                        let menu = deepClone(data);
-                        menu.forEach((item) => {
-                            replaceDoc(item, state.permission);
-                        });
-                        commit('SET_MENU', menu);
-                        resolve(menu)
-                    }
-                    reject();
-                }).catch((err) => {
-                    reject(err);
-                })
-            })
-        },
+        // GetMenu({ commit,state }) {
+        //     return new Promise((resolve,reject) => {
+        //         getMenu().then((res) => {
+        //             if(res.data.code === 0) {
+        //                 const data = res.data.data;
+        //                 let menu = deepClone(data);
+        //                 menu.forEach((item) => {
+        //                     replaceDoc(item, state.permission);
+        //                 });
+        //                 commit('SET_MENU', menu);
+        //                 resolve(menu)
+        //             }
+        //             reject();
+        //         }).catch((err) => {
+        //             reject(err);
+        //         })
+        //     })
+        // },
         GetUserMenu({commit}) {
             return new Promise((resolve,reject) => {
                 getMenu1().then((res) => {
                     // console.log(res)
                     const data =res.data.data
-                    let menu = deepClone(data)
-                    // console.log(menu)
-                    // menu.forEach((item) => {
-                    //     replaceDoc(item, state.permission);
-                    // });
+                    // let menu = deepClone(data)
+                    const getTree = function (treeData, parentId) {
+                        const treeArr = [];
+                        for (var i = 0; i < treeData.length; i++) {
+                          const node = treeData[i];
+                          if (node.parentId === parentId) {
+                            const newNode = { id: node.id, title: node.name, children: getTree(treeData, node.id),name:node.name,icon:node.icon,path:node.path,component:node.component };
+                            treeArr.push(newNode);
+                          }
+                        }
+                        return treeArr;
+                      }
+                     let menu = getTree(data, 0)
                     commit('SET_MENU', menu);
                     resolve(menu)
+                    // console.log(menu)
                 }).catch((err) => {
                     reject(err)
                 })

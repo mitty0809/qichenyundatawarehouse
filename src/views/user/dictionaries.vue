@@ -35,8 +35,8 @@
                                                         <avue-crud :option="itemoption" :data="itemdata"
                                                             @row-save="rowSaveitem" @row-update="itemrowUpdate"
                                                             @row-del="itemrowDel" :page="itempage" @on-load="onLoad1"
-                                                            @size-change="itemsizechange" @refresh-change="refresh"
-                                                            :table-loading="loading">
+                                                             @refresh-change="refresh"
+                                                            :table-loading="loading1">
                                                         </avue-crud>
                                                     </div>
                                                 </div>
@@ -86,6 +86,7 @@
                 dictionariesname: '',
                 dictId: "",
                 loading: true,
+                loading1:true,
                 pageSizes: [5],
                 dictdata: [
                 ],
@@ -227,10 +228,12 @@
             },
             // 获取字典项列表
             itemlist(id) {
+                this.loading1=true
                 getDictitemlist(id, this.itempage.pageSize, this.itempage.currentPage).then(res => {
                     this.itempagedata = res.data.data
                     this.itempage.total = this.itempagedata.total
                     this.itemdata = this.itempagedata.content
+                    this.loading1=false
                 }).catch(error => {
                     console.log(error)
                     this.$notify.success({ title: '获取', message: '获取字典项失败' });
@@ -238,7 +241,6 @@
             },
             // 新增字典项
             rowSaveitem(form, done) {
-                debugger
                 addDictitem(this.dictId, form.itemName, form.itemValue, form.seq, form.remark).then(res => {
                     this.itemdata = res.data.data
                     this.itemlist(this.dictId)
@@ -259,7 +261,6 @@
                     this.searchContent = params.dictName
                 }
                 this.dictlist()
-                // this.$message.success('search callback' + JSON.stringify(Object.assign(params, this.searchForm)))
             },
             //修改字典项
             itemrowUpdate(form, index, done) {
@@ -288,13 +289,13 @@
             },
             //显示字典项弹出框
             dqid(row) {
-                // this.page.pageSize=1
                 this.itempage.pageSizes = this.pageSizes
                 this.itempage.pageSize = 5
                 this.dictId = row.id
                 this.dictionariesname = row.dictName
                 this.itemlist(row.id)
                 this.ariamodal = true
+                this.itemdata=[]
             },
             // 关闭字典项弹出框
             close() {
@@ -302,23 +303,16 @@
             },
             // 切换每页条数
             sizechange(page) {
-                // console.log(page)
                 this.page.pageSize = page
                 this.dictlist()
             },
             // 字典项分页首次请求
             onLoad1(page) {
-                // console.log(page)
                 this.itempage = page
                 this.itempage.pageSizes = this.pageSizes
-                this.itemlist(this.dictId)
             },
-            itemsizechange(page) {
-                console.log(page)
-                console.log('点击了page')
-                // this.itempage.pageSize=page
-                // this.itemlist(this.dictId)
-            },
+            // itemsizechange(page) {
+            // },
             refreshChange(page) {
                 this.searchContent = ''
                 this.dictlist()

@@ -20,13 +20,22 @@ export default [{
     component: () =>
       import( /* webpackChunkName: "views" */ '@/views/util/statistics')
   }, {
-    path: '/store',
+    path: '/util',
     name: '数据查询',
     meta: {
-      i18n: 'store'
+      i18n: 'util'
     },
     component: () =>
-      import( /* webpackChunkName: "views" */ '@/views/util/crud-form')
+      import( /* webpackChunkName: "views" */ '@/views/util/crud-form'),
+    children:[{
+      path:'index',
+      name:'详情页',
+      meta:{
+        i18n:'detail'
+      },
+      component:() => 
+      import(/* webpackChunkName: "views" */ '@/views/util/form-detail')
+    }]
   },{
     path: 'dashboard',
     name: '控制台',
@@ -137,7 +146,8 @@ export default [{
       },
     ]
   }]
-}, {
+},
+ {
   path: '/test',
   component: Layout,
   redirect: '/test/index',
@@ -270,14 +280,14 @@ export default [{
     component: () =>
       import( /* webpackChunkName: "views" */ '@/views/util/member')
   },
-  // {
-  //   path: 'import',
-  //   name: 'Excel上传',
-  //   meta: {
-  //     i18n: 'import'
-  //   },
-  //   component: () =>
-  //     import( /* webpackChunkName: "views" */ '@/views/util/import')
-  // }
+  {
+    path: 'import',
+    name: 'Excel上传',
+    meta: {
+      i18n: 'import'
+    },
+    component: () =>
+      import( /* webpackChunkName: "views" */ '@/views/util/import')
+  }
 ]
 }]

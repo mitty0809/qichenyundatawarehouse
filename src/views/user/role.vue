@@ -8,7 +8,7 @@
                     <div class="el-card__body">
                         <avue-crud :option="option" :data="data" @search-change="searchChange" v-model="form"
                             @row-save="rowSave" @row-update="rowUpdate" @row-del="rowDel" :page="page" @on-load="onLoad"
-                            @size-change="sizechange" :table-loading="loading" ref="crud">
+                            :table-loading="loading" ref="crud" :before-close='close'>
                             <template slot="menu" slot-scope="scope">
                                 <el-button :size="scope.size" :type="scope.type" icon="el-icon-check"
                                     @click="jurisdiction(scope.row)">权限</el-button>
@@ -16,15 +16,15 @@
                             <template slot-scope="scope" slot="menuForm" :addDisplay="false">
                                 <div class="tree" v-show="treeshow">
                                     <el-tree :data="data2" show-checkbox check-strictly ref="tree" :props="defaultProps"
-                                        node-key="id" @check="getHalfCheckedNodes">
+                                        node-key="id" @check="getHalfCheckedNodes" :default-checked-keys="[]">
                                     </el-tree>
                                 </div>
                                 <!-- <el-button type="primary" size="small">自定义按钮</el-button> -->
                             </template>
-                            <template slot-scope="scope" slot="menuForm">
+                            <!-- <template slot-scope="scope" slot="menuForm">
                                 <el-button type="primary" icon="el-icon-check" size="small" plain
                                     @click.stop="handleEdit(scope)">自定义按钮</el-button>
-                            </template>
+                            </template> -->
 
                         </avue-crud>
                         <!-- 设置权限 -->
@@ -40,9 +40,8 @@
                                     </button>
                                 </div>
                                 <div class="el-dialog__body">
-                                    <el-tree :data="data1" show-checkbox node-key="id" :default-checked-keys="checken"
-                                        :props="defaultProps1" @check="getHalfCheckedNodes1"
-                                        @check-change="handleCheckChange">
+                                    <el-tree :data="data1" show-checkbox node-key="id" ref="tree"
+                                        :props="defaultProps1" @check="getHalfCheckedNodes1">
                                     </el-tree>
                                     <div class="el-dialog__footer">
                                         <span class="dialog-footer">
@@ -81,7 +80,7 @@
             value: 3
         }]
     };
-    import { rolelist, roleadd, roleupdate, deleterole, getMenutree, getrolemenu, setrolemenu } from '@/api/user'
+    import { rolelist, roleadd, roleupdate, deleterole, getMenutree, getrolemenu, setrolemenu, orgtree } from '@/api/user'
     import { encryption } from '@/util/util'
     export default {
         data() {
@@ -105,55 +104,22 @@
                 getmenuarr: [],
                 loading: true,
                 roleId: '',
+                // orgs:[],
                 addshow: false,
                 checken: [],
-                index:'',
+                index: '',
                 total: [2, 3, 4, 5, 6],
                 treeshow: false,
                 treearr: [1, 2, 3, 4],
                 page: {
                     pageSize: ''
                 },
-                data2: [{
-                    id: 1,
-                    label: '一级 1',
-                    children: [{
-                        id: 4,
-                        label: '二级 1-1',
-                        children: [{
-                            id: 9,
-                            label: '三级 1-1-1'
-                        }, {
-                            id: 10,
-                            label: '三级 1-1-2'
-                        }]
-                    }]
-                }, {
-                    id: 2,
-                    label: '一级 2',
-                    children: [{
-                        id: 5,
-                        label: '二级 2-1'
-                    }, {
-                        id: 6,
-                        label: '二级 2-2'
-                    }]
-                }, {
-                    id: 3,
-                    label: '一级 3',
-                    children: [{
-                        id: 7,
-                        label: '二级 3-1'
-                    }, {
-                        id: 8,
-                        label: '二级 3-2'
-                    }]
-                }],
+                data2: [],
                 defaultProps: {
                     children: 'children',
-                    label: 'label',
+                    label: 'name',
+                    value: 'id'
                 },
-
                 option: {
                     align: 'center',
                     viewBtn: true,
@@ -188,7 +154,7 @@
 
                     }, {
                         label: '数据权限',
-                        prop: 'name',
+                        prop: 'dataType',
                         type: 'select',
                         hide: true,
                         dicData: DIC.VAILD,
@@ -213,9 +179,14 @@
         },
         created() {
             getMenutree().then(res => {
-                // console.log(res)
                 this.data1 = res.data.data
-                // console.log(this.data1)
+            }).catch(error => {
+                console.log(error)
+            })
+            orgtree().then(res => {
+                console.log(res)
+                this.data2 = res.data.data
+
             }).catch(error => {
                 console.log(error)
             })
@@ -239,25 +210,48 @@
             },
             // 添加角色
             rowSave(form, done) {
-                roleadd(form.roleNo, form.roleName, this.form.dataType, form.remark).then(res => {
-                    if (res.data.code === 0) {
-                        this.hint('添加', '添加角色成功')
-                        this.getrolelist()
+                if (form.dataType === 1) {
+                    const data = {
+                        roleNo: form.roleNo,
+                        roleName: form.roleName,
+                        dataType: this.form.dataType,
+                        remark: form.remark,
+                        orgs: this.form.orgs
                     }
-                }).catch(error => {
-                    console.log(error)
-                    // if(error.data.code===400){
-                    //     this.hint('添加', '添加角色失败')
-                    // }
-                    this.hint('添加', '添加角色失败')
-                })
+                    roleadd(data).then(res => {
+                        if (res.data.code === 0) {
+                            this.hint('添加', '添加角色成功')
+                            this.getrolelist()
+                        }
+                        this.treeshow = false
+                    }).catch(error => {
+                        console.log(error)
+                        this.hint('添加', '添加角色失败')
+                    })
+                } else {
+                    const data = {
+                        roleNo: form.roleNo,
+                        roleName: form.roleName,
+                        dataType: this.form.dataType,
+                        remark: form.remark,
+                    }
+                    roleadd(data).then(res => {
+                        if (res.data.code === 0) {
+                            this.hint('添加', '添加角色成功')
+                            this.getrolelist()
+                        }
+                        this.treeshow = false
+                    }).catch(error => {
+                        console.log(error)
+                        this.hint('添加', '添加角色失败')
+                    })
+                }
                 done()
             },
             // 修改角色信息
             rowUpdate(form, index, done) {
-                console.log(index)
-                this.index=index
-                roleupdate(form.id, form.roleName, form.dataType, form.remark).then(res => {
+                this.index = index
+                roleupdate(form.id, form.roleName, form.dataType, form.remark, this.form.orgs).then(res => {
                     if (res.data.code === 0) {
                         this.hint('修改', '修改角色成功')
                         this.getrolelist()
@@ -282,11 +276,10 @@
 
             getHalfCheckedNodes(data, nodes) {
                 const arr = nodes.checkedKeys
+                this.form.orgs = arr
             },
             getHalfCheckedNodes1(data, nodes) {
-                // console.log(nodes)
                 this.getmenuarr = nodes.checkedKeys
-
             },
             // 分页
             onLoad(page) {
@@ -294,33 +287,29 @@
                 this.page.pageSizes = this.total
                 this.getrolelist()
             },
-            sizechange(page) {
-                // console.log(page)
-            },
             // 获取菜单权限
             jurisdiction(row) {
                 this.roleId = row.id
-                // console.log(row.id)
-                // this.checken=''
+                console.log(row)
+                console.log(this.checken)
                 getrolemenu(row.id).then(res => {
                     this.checken = res.data.data
-                    console.log(res.data.data)
-                    console.log(this.checken)
+                    this.setCheckedKeys()
                 }).catch(error => {
                     console.log(error)
                 })
                 this.addshow = true
             },
+            setCheckedKeys(){
+                console.log(this.checken)
+                this.$refs.tree.setCheckedKeys(this.checken);
+            },
             // 设置菜单权限
             getmenu() {
                 setrolemenu(this.roleId, this.getmenuarr).then(res => {
-                    // console.log(res)
                     if (res.data.code === 0) {
                         this.addshow = false
                         this.$store.dispatch("GetUserMenu").then(data => {
-                            //   console.log(data)
-                            //   if (data.length === 0) return;
-                            //   this.$router.$avueRouter.formatRoutes(data, true);
                         });
                     }
                 }).catch(error => {
@@ -330,7 +319,6 @@
             countermand() {
                 this.addshow = false
             },
-
             qx() {
                 this.addshow = false
             },
@@ -339,13 +327,18 @@
                 this.$notify.success({ title: title, message: value });
             },
             handleCheckChange(data, checked, indeterminate) {
-                console.log(data, checked, indeterminate);
+                
+                // console.log(data, checked, indeterminate);
             },
             handleEdit(scope) {
-                console.log(scope)
-                // console.log(this.form)
                 this.$refs.crud.rowEdit(this.form, this.index);
             },
+            close(done, type) {
+                this.treeshow = false
+                this.form.orgs = []
+                // this.getmenuarr=[]
+                // this.checken=[]
+            }
 
         }
     }

@@ -57,7 +57,7 @@ export default {
     dashboard: 'dashboard',
     more: 'more',
     tags: 'tags',
-    store: 'store',
+    crudform: 'crudform',
     permission: 'permission',
     api: 'api',
     logs: 'logs',

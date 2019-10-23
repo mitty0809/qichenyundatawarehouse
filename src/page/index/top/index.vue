@@ -85,7 +85,7 @@
             <router-link to="/info/setting">{{$t('navbar.setting')}}</router-link>
           </el-dropdown-item>
           <el-dropdown-item>
-              <router-link to="/info/dialog">{{$t('navbar.dialog')}}</router-link>
+              <router-link to="/info/role">{{$t('navbar.role')}}</router-link>
             </el-dropdown-item>
           <!-- <el-dropdown-item>
               <router-link to="/info/dictionaries">{{$t('navbar.dictionaries')}}</router-link>
