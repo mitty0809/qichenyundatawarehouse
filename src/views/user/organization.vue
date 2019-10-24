@@ -124,7 +124,7 @@
                     name: "",
                     fullName: "",
                     orgType: "",
-                    parentId: "",
+                    parentId: 0,
                     seq: ""
                 },
                 option: {
@@ -232,11 +232,14 @@
             // 点击树节点触发事件
             handleNodeClick(data, node) {
                 this.form = data
+                this.addform.parentId = this.form.id
+                console.log(data)
             },
             addorg() {
                 this.show = true
                 this.addshow = true
-                this.addform.parentId = this.form.parentId
+                // this.addform.parentId = this.form.parentId
+                // this.addform.parentId = this.form.parentId
             },
             updateorg() {
                 this.update = true
@@ -288,6 +291,7 @@
                         if (res.data.code === 0) {
                             this.hint('删除', '删除菜单成功')
                         }
+                        console.log(this.addform)
                     }).catch(error => {
                         console.log(error)
                         this.hint('删除', '删除菜单失败')
