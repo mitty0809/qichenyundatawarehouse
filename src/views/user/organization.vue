@@ -17,12 +17,14 @@
                                     @click="updateorg">
                                     <!----><i class="edit"></i><span>编辑
                                     </span></button>
-                                <button type="button" class="el-button el-button--primary el-button--medium" @click="orgdelete">
+                                <button type="button" class="el-button el-button--primary el-button--medium"
+                                    @click="orgdelete">
                                     <!----><i class="delete"></i><span>删除
                                     </span></button></div>
                         </div>
                         <div class="v-modal" tabindex="0" style="z-index: 2018;" v-show="addshow"></div>
-                        <div class="el-dialog__wrapper avue-crud__dialog" size="50%" style="z-index: 2046;" v-show="addshow">
+                        <div class="el-dialog__wrapper avue-crud__dialog" size="50%" style="z-index: 2046;"
+                            v-show="addshow">
                             <div role="dialog" aria-modal="true" aria-label="新 增" class="el-dialog"
                                 style="margin-top: 100px; width: 50%;">
                                 <div class="el-dialog__header">
@@ -35,12 +37,12 @@
                                     <avue-form :option="addoption" v-model="addform"></avue-form>
                                     <div class="el-dialog__footer">
                                         <span class="dialog-footer">
-                                            <button type="button"
-                                                class="el-button el-button--primary el-button--medium" @click="preserve">
+                                            <button type="button" class="el-button el-button--primary el-button--medium"
+                                                @click="preserve">
                                                 <span>保 存</span>
                                             </button>
-                                            <button type="button"
-                                                class="el-button el-button--default el-button--medium">
+                                            <button type="button" class="el-button el-button--default el-button--medium"
+                                                @click="close">
                                                 <span>取 消</span>
                                             </button>
                                         </span>
@@ -66,7 +68,8 @@
                                             <span>取消</span></button>
                                     </div> -->
                                     <div class="el-form-item__content" style="margin-left: 80px;" v-show="update">
-                                        <button type="button" class="el-button el-button--primary el-button--medium" @click="renewal">
+                                        <button type="button" class="el-button el-button--primary el-button--medium"
+                                            @click="renewal">
                                             <!---->
                                             <!----><span>更新
                                             </span></button><button type="button"
@@ -85,9 +88,9 @@
     </div>
 </template>
 <script>
-    import { orgtree,orgadd,orgupdate,orgdelete } from '@/api/user'
-    import {hint} from '@/util/util'
-    const DIC={
+    import { orgtree, orgadd, orgupdate, orgdelete } from '@/api/user'
+    import { hint } from '@/util/util'
+    const DIC = {
         ORGTYPE: [{
             label: '公司',
             value: 10
@@ -112,9 +115,9 @@
                 val: '1111',
                 type: '',
                 form: {
-                    parentId:'0'
+                    parentId: '0'
                 },
-                addshow:false,
+                addshow: false,
                 disabled: true,
                 addform: {
                     orgNo: "",
@@ -133,9 +136,9 @@
                     column: [{
                         label: "上级id",
                         prop: "parentId",
-                        row: false, 
-                        editDisabled:true,
-                        disabled:true
+                        row: false,
+                        editDisabled: true,
+                        disabled: true
                     }, {
                         label: "机构简称",
                         prop: "name",
@@ -149,7 +152,7 @@
                         prop: 'orgType',
                         type: "radio",
                         dicData: DIC.ORGTYPE,
-                    },{
+                    }, {
                         label: "排序",
                         prop: "seq",
                         row: false,
@@ -164,7 +167,14 @@
                     column: [{
                         label: '上级机构',
                         prop: 'parentId',
-                        readonly:true,
+                        type: 'tree',
+                        props: {
+                            label: 'name',
+                            value: 'id',
+                            children: 'children'
+                        },
+                        dicUrl: 'https://dev.qichenyun.com/dw/org/tree',
+                        readonly: true,
                     }, {
                         label: '机构编码',
                         prop: 'orgNo'
@@ -202,7 +212,6 @@
                     this.data.forEach(item => {
                         item.label = item.name
                         if (item.children.length == 0) {
-
                         } else {
                             item.children.forEach(item => {
                                 item.label = item.name
@@ -226,44 +235,50 @@
             },
             addorg() {
                 this.show = true
-                this.addshow=true
-                this.addform.parentId=this.form.parentId
+                this.addshow = true
+                this.addform.parentId = this.form.parentId
             },
             updateorg() {
-                this.update=true
+                this.update = true
                 // console.log(this.form)
             },
             // 添加机构
-            preserve(){
-                orgadd(this.addform.orgNo,this.addform.name,this.addform.fullName,this.addform.orgType,this.addform.parentId,this.addform.seq).then(res => {
-                    this.addshow=false
-                    if(res.data.code===0){
+            preserve() {
+                orgadd(this.addform.orgNo, this.addform.name, this.addform.fullName, this.addform.orgType, this.addform.parentId, this.addform.seq).then(res => {
+                    // this.addshow = false
+                    this.close() 
+                    if (res.data.code === 0) {
                         this.getTree()
-                        this.hint('添加','添加机构成功')
+                        this.hint('添加', '添加机构成功')
                     }
                 }).catch(error => {
-                    console.log(error)
-                    this.hint('添加','添加机构失败')
+                    this.hint('添加', '添加机构失败')
                 })
             },
             // 关闭添加弹窗
-            close(){
-                this.addshow=false
+            close() {
+                this.addshow = false
+                this.addform.parentId=0
+                this.addform.orgNo='',
+                this.addform.fullName='',
+                this.addform.name=''
+                this.addform.orgType=''
+                this.addform.seq=''
             },
             // 修改机构信息
-            renewal(){
-                orgupdate(this.form.id,this.form.name,this.form.fullName,this.form.orgType,this.form.parentId,this.form.seq,this.form.remark).then(res => {
+            renewal() {
+                orgupdate(this.form.id, this.form.name, this.form.fullName, this.form.orgType, this.form.parentId, this.form.seq, this.form.remark).then(res => {
                     console.log(res)
-                    this.hint('修改','修改机构成功')
+                    this.hint('修改', '修改机构成功')
                     this.getTree()
                 }).catch(error => {
                     console.log(error)
-                    this.hint('修改','修改机构失败')
+                    this.hint('修改', '修改机构失败')
                 })
             },
             // 删除机构
-            orgdelete(){
-            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            orgdelete() {
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -271,11 +286,11 @@
                     orgdelete(this.form.id).then(res => {
                         this.getTree()
                         if (res.data.code === 0) {
-                            this.hint('删除','删除菜单成功')
+                            this.hint('删除', '删除菜单成功')
                         }
                     }).catch(error => {
                         console.log(error)
-                        this.hint('删除','删除菜单失败')
+                        this.hint('删除', '删除菜单失败')
                     })
                 }).catch(() => {
                     this.$message({
@@ -284,7 +299,7 @@
                     });
                 });
             },
-            hint(title,value){
+            hint(title, value) {
                 this.$notify.success({ title: title, message: value });
             }
         },

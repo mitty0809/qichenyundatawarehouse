@@ -41,7 +41,7 @@ const navs = {
             state.tag = action;
             setStore({ name: 'tag', content: state.tag, type: 'session' })
             if (state.tagList.some(ele => diff(ele, action))) return
-            console.log(action)
+            // console.log(action)
             if(action.meta.i18n){
                 state.tagList.push(action)
             }else{

@@ -3,7 +3,7 @@ import { setStore, getStore } from '@/util/store'
 // import { isURL, validatenull } from '@/util/validate'
 import { encryption, deepClone } from '@/util/util'
 // import webiste from '@/config/website'
-import { loginByUsername, getUserInfo, getMenu, getTopMenu, logout, refeshToken,getMenu1 } from '@/api/user'
+import { loginByUsername, getUserInfo, getMenu, getTopMenu, logout, refeshToken,getMenu1,getinfo } from '@/api/user'
 
 import menuComponent from './menu'
 // function addPath(ele, first) {
@@ -75,6 +75,7 @@ const user = {
         menu: getStore({ name: 'menu' }) || [],
         menuAll: [],
         token: getStore({ name: 'token' }) || '',
+        client:{}
     },
     actions: {
         //根据用户名登录
@@ -194,6 +195,7 @@ const user = {
         //         })
         //     })
         // },
+        // 获取用户菜单列表
         GetUserMenu({commit}) {
             return new Promise((resolve,reject) => {
                 getMenu1().then((res) => {
@@ -219,6 +221,18 @@ const user = {
                     reject(err)
                 })
             })   
+        },
+        // 获取客户信息
+        GetInfo({commit},id){
+            return new Promise((resolve,reject) => {
+                getinfo(id).then((res) => {
+                    let data=res.data.data
+                    commit('SET_CLIENT',data)
+                    resolve()
+                }).catch((err) => {
+                    reject(err)
+                })
+            })
         }
         // //获取字典
         // GetDictList({state}){
@@ -278,6 +292,10 @@ const user = {
                 state.permission[ele] = true;
             });
         },
+        SET_CLIENT:(state,client) => {
+            state.client=client
+            console.log(state.client)
+        }
         
     }
 

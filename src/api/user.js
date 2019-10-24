@@ -489,10 +489,3 @@ export const importexcel = (data) => request({
     headers: { 'Content-Type': 'multipart/form-data' },
     data:data
 })
-
-export const addFile = (data) => request({
-    url: baseUrl + 'open/asset/import',
-    method: "post",
-    headers: { 'Content-Type': 'multipart/form-data' },
-    data:data
-})

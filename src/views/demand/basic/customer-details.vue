@@ -1,11 +1,11 @@
 <template>
-        <basic-container>
-                <avue-form :option="option" v-model="form" >
-                  <template slot-scope="scope" slot="menuForm">
-                    <el-button @click="tip">自定义按钮</el-button>
-                  </template>
-                </avue-form>         
-        </basic-container>
+    <basic-container>
+        <avue-form :option="option" v-model="form">
+            <template slot-scope="scope" slot="menuForm">
+                <el-button @click="tip">自定义按钮</el-button>
+            </template>
+        </avue-form>
+    </basic-container>
     <!-- <el-form ref="form" :model="form" label-width="80px" :inline="true">
         <el-form-item label="活动名称">
             <el-input v-model="form.name"></el-input>
@@ -22,13 +22,22 @@
     </el-form> -->
 </template>
 <script>
-        var DIC = {
+    import VueEvent from '../../../bus.js'
+    import { getinfo } from '@/api/user'
+    import { mapGetters, mapState } from "vuex";
+    var DIC = {
         VAILD: [{
-            label: '真',
-            value: 'true'
+            label: '自用',
+            value: '10'
         }, {
-            label: '假',
-            value: 'false'
+            label: '商用',
+            value: '20'
+        }, {
+            label: '代购',
+            value: '30'
+        }, {
+            label: '其他',
+            value: '99'
         }],
         SEX: [{
             label: '男',
@@ -36,6 +45,13 @@
         }, {
             label: '女',
             value: 1
+        }],
+        SEX2: [{
+            label: '有',
+            value: true
+        }, {
+            label: '无',
+            value: false
         }]
     }
     export default {
@@ -59,18 +75,20 @@
                     total: 122
                 },
                 form: {},
+                baseInfo: {},
+                assetId: 1,
                 option: {
                     labelWidth: 100,
-                    span:8,
+                    span: 8,
                     column: [
+                        // 字段名未校对
                         {
                             label: "单据编码",
-                            prop: "username",
+                            prop: "serialNo",
                             row: false,
                             span: 8,
-                            readonly:true,
-                            valueDefault: "0001"
                         },
+                        // 字段名未校对
                         {
                             label: "业务日期",
                             prop: "date",
@@ -80,273 +98,320 @@
                         },
                         {
                             label: "业务类型",
-                            prop: "type",
+                            prop: "bizType",
                             type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            span: 8,
+                            dicData: [{
+                                label: '卡分期',
+                                value: 10
+                            }, {
+                                label: '直租',
+                                value: 20
+                            }, {
+                                label: '回租',
+                                value: 10
+                            }, {
+                                label: '车抵押',
+                                value: 40
+                            },]
                         },
                         {
                             label: "经销商",
-                            prop: "password",
+                            prop: "dealer",
                             row: false,
                             span: 8
                         },
+                        // 字段名未校对
                         {
                             label: "业务部门",
                             prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "业务员",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "salesman",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "业务员电话",
-                            prop: "textareai",
+                            prop: "salemanMobile",
+                            type: 'phone',
                             row: false,
                             span: 8
                         },
                         {
                             label: "资金来源",
-                            prop: "textareai",
+                            prop: "capitalSource",
                             row: false,
-                            span: 8
+                            span: 8,
+                            type: 'select',
+                            dicData: [
+                                {
+                                    label: '自有',
+                                    value: 10
+                                }, {
+                                    label: '银行',
+                                    value: 20
+                                }, {
+                                    label: '其他',
+                                    // disabled: true,
+                                    value: 99
+                                }
+                            ]
                         },
                         {
                             label: "客户姓名",
-                            prop: "textareai",
+                            prop: "name",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "证件类型",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "idType",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "身份证号码",
-                            prop: "textareai",
+                            prop: "idNo",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "证件有效期",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "idEndDate",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "身份证归属地",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "idPlace",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "手机号码",
-                            prop: "textareai",
+                            prop: "mobile",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "手机号归属地",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "mobilePlace",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "备用手机号",
-                            prop: "textareai",
+                            prop: "secondMobile",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "婚姻状况",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "marriageStatus",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
+                        // 字段名未校对
                         {
                             label: "年龄",
                             prop: "textareai",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
+                        // 字段名未校对
                         {
                             label: "民族",
                             prop: "textareai",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "户籍",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "householdType",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "学历",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "education",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "驾驶证",
-                            prop: "textareai",
+                            prop: "driverLicense",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "宅电",
-                            prop: "textareai",
+                            prop: "tel",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "购车目的",
-                            prop: "type",
+                            prop: "purpose",
                             type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            span: 8,
+                            dicData: DIC.VAILD
                         },
                         {
                             label: "现居省份",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "residenceProvinceNo",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "现居城市",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "residenceCityNo",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "现居地址",
-                            prop: "textareai",
+                            prop: "residenceAddr",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "电子邮件",
-                            prop: "textareai",
+                            prop: "email",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "户籍省份",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "householdProvinceNo",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "户籍城市",
-                            prop: "type",
-                            type: "select",
-                            span:8,
-                            dicData:DIC.VAILD
+                            prop: "householdCityNo",
+                            // type: "select",
+                            span: 8,
+                            // dicData: DIC.VAILD
                         },
                         {
                             label: "户籍地址",
-                            prop: "textareai",
+                            prop: "householdAddr",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "QQ号",
-                            prop: "textareai",
+                            prop: "qq",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "家庭月收入",
-                            prop: "textareai",
+                            prop: "familyMonthIncome",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "家庭月支出",
-                            prop: "textareai",
+                            prop: "familyMonthExpenses",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "主要收入来源",
-                            prop: "textareai",
+                            prop: "incomeSource",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "其它收入来源",
-                            prop: "textareai",
+                            prop: "secondIncomeSource",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "社保",
-                            prop: "textareai",
+                            prop: "socialSecurity",
                             row: false,
+                            type: 'radio',
                             span: 8,
-                            formHeight:40
+                            formHeight: 40,
+                            dicData: DIC.SEX2,
                         },
                         {
                             label: "开户行",
-                            prop: "textareai",
+                            prop: "bank",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "账号",
-                            prop: "textareai",
+                            prop: "bankCardAccountName",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                         {
                             label: "抚养/赡养人数",
-                            prop: "textareai",
+                            prop: "familyMembers",
                             row: false,
                             span: 8,
-                            formHeight:40
+                            formHeight: 40
                         },
                     ]
                 }
             };
         },
-        created(){
-            
+        created() {
+            console.log(this.client)
+            this.form = this.client.customers[0]
+            this.baseInfo = this.client.baseInfo
+            this.form.serialNo=this.baseInfo.serialNo
+            this.$set(this.form, 'bizType', this.baseInfo.bizType)
+            this.$set(this.form, 'dealer', this.baseInfo.dealer)
+            this.$set(this.form, 'salesman', this.baseInfo.salesman)
+            this.$set(this.form, 'salemanMobile', this.baseInfo.salemanMobile)
+            this.$set(this.form, 'capitalSource', this.baseInfo.capitalSource)
+        },
+        mounted() {
+        },
+        computed: {
+            ...mapState({
+                client: state => state.user.client
+            }),
         },
         methods: {
             handleForm() {
@@ -356,7 +421,8 @@
             },
             tip() {
                 console.log('点击了自定义按钮')
-            }
+            },
+
         }
     };
 </script>

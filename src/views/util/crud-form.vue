@@ -37,53 +37,50 @@
       </template>
     </avue-crud> -->
     <avue-crud :option="option" :data="data" @search-change="searchChange">
-        <!-- <template slot="search">
+      <!-- <template slot="search">
           <el-col :md="6" :xs="24">
             <el-form-item label="自定义">
               <el-input placeholder="自定义搜索" size="small" v-model="searchForm.solt" />
             </el-form-item>
           </el-col>
         </template> -->
-        <!-- <template slot="searchMenu">
+      <!-- <template slot="searchMenu">
           <el-button size="small">自定义按钮</el-button>
         </template> -->
-        <template slot-scope="scope" slot="searchMenu">
-            <exceldialog class="upload" v-bind:title="show">
-              <div class="el-message-box__title" slot="title">
-                <span>导入</span>
-              </div>
-              <div style="margin:0 auto;" slot="upload">
-                <el-upload 
-                action=""
-                :before-upload="beforeUpload"
-                :show-file-list="false"
-                :with-credentials="true"
-                 multiple>
-                  <el-tooltip class="item" effect="dark" content="请先下载模板在导入数据" placement="top-start">
-                    <el-button type="primary" icon="el-icon-plus"  size="small">导入 excel</el-button>
-                  </el-tooltip>
-                </el-upload>
-              </div>
-              <div style="margin:0 auto;text-align:center;display:flex" slot="download">
-                <div style="width:50%" class="download" @click="handleGet">
-                  <i class="icon-xiazaimoban1"></i><span style="cursor:pointer;margin-left:8px;">下载模板</span>
-                </div>
-                <div style="width:50%" class="download" @click="handleGet">
-                  <i class="icon-xiazai2"></i><span style="cursor:pointer;margin-left:8px;">下载模板</span>
-                </div>
-              </div>
-            </exceldialog>
-          </template>
-        <template slot="menu" slot-scope="scope">
-            <el-button :size="scope.size" :type="scope.type" @click="handleForm">详情</el-button>
-          </template>
-      </avue-crud>
+      <template slot-scope="scope" slot="searchMenu">
+        <exceldialog class="upload" v-bind:title="show">
+          <div class="el-message-box__title" slot="title">
+            <span>导入</span>
+          </div>
+          <div style="margin:0 auto;" slot="upload">
+            <el-upload action="" :before-upload="beforeUpload" :show-file-list="false" :with-credentials="true"
+              multiple>
+              <el-tooltip class="item" effect="dark" content="请先下载模板在导入数据" placement="top-start">
+                <el-button type="primary" icon="el-icon-plus" size="small">导入 excel</el-button>
+              </el-tooltip>
+            </el-upload>
+          </div>
+          <div style="margin:0 auto;text-align:center;display:flex" slot="download">
+            <div style="width:50%" class="download" @click="handleGet">
+              <i class="icon-xiazaimoban1"></i><span style="cursor:pointer;margin-left:8px;">下载模板</span>
+            </div>
+            <div style="width:50%" class="download" @click="handleGet">
+              <i class="icon-xiazai2"></i><span style="cursor:pointer;margin-left:8px;">下载模板</span>
+            </div>
+          </div>
+        </exceldialog>
+      </template>
+      <template slot="menu" slot-scope="scope">
+        <el-button :size="scope.size" :type="scope.type" @click="handleForm">详情</el-button>
+      </template>
+    </avue-crud>
   </basic-container>
 </template>
 
 <script>
   import exceldialog from '../user/dialog'
   import { getinfo, getclientinfo, importexcel, addFile } from '@/api/user'
+  import VueEvent from '../../bus.js'
 
   export default {
     components: {
@@ -92,10 +89,11 @@
     data() {
       return {
         // list: [],
-        searchForm:{},
+        searchForm: {},
         // clearble: false,
         assetId: 1,
         show: false,
+        value: '我来自first.vue组件！',
         // limitUpload: 5,
         fileTemp: '',
         page: {
@@ -105,51 +103,51 @@
         option: {
           editBtn: false,
           delBtn: false,
-          addBtn:false,
+          addBtn: false,
           menuWidth: 60,
           menuType: "text",
           menuBtnTitle: "详情",
           align: 'center',
           border: true,
-          searchLabelWidth:150,
-          searchShow:false,
+          searchLabelWidth: 150,
+          searchShow: false,
           // labelWidth:120,
           column: [
             {
               label: "客户名称",
               prop: "name",
-              search:true,
+              search: true,
             },
             {
               label: "手机号",
               prop: "mobile",
-              search:true,
+              search: true,
             },
             {
               label: "身份证号",
               prop: "idNo",
-              search:true,
+              search: true,
             },
             {
               label: "贷款金额",
               prop: "loanamount",
               hide: true,
-              search:true,
+              search: true,
             },
             {
               label: "业务专员",
               prop: "businessspecialist",
-              search:true,
+              search: true,
             },
             {
               label: "所属组织",
               prop: "organisation",
-              search:true,
+              search: true,
             },
             {
               label: "业务类型",
               prop: "businesstype",
-              search:true,
+              search: true,
             }
           ]
         },
@@ -219,7 +217,7 @@
       getclientinfo() {
         getinfo(this.assetId).then(res => {
           console.log(res)
-          this.data=res.data.data.customers
+          this.data = res.data.data.customers
           console.log(this.data)
         }).catch(error => {
           console.log(error)
@@ -229,6 +227,8 @@
       handleForm() {
         this.$router.push({
           path: "/form-detail/index/customer-details",
+        });
+        this.$store.dispatch("GetInfo",this.assetId).then(data => {
         });
       },
       // 搜索
@@ -240,10 +240,11 @@
         this.page = page
       },
       // 导入Excel
-      beforeUpload(file){
+      beforeUpload(file) {
         const formData = new FormData();
         formData.append('file', file, file.name);
         importexcel(formData).then(res => {
+          console.log(res)
         }).catch(error => {
           console.log(error)
         })
@@ -266,6 +267,9 @@
       handleRemove(file, fileList) {
         this.fileTemp = null
       },
+      add() {// 定义add方法，并将msg通过txt传给second组件
+        VueEvent.$emit('txt', this.value);
+      }
     }
   };
 </script>

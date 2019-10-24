@@ -40,8 +40,8 @@
                                     </button>
                                 </div>
                                 <div class="el-dialog__body">
-                                    <el-tree :data="data1" show-checkbox node-key="id" ref="tree"
-                                        :props="defaultProps1" @check="getHalfCheckedNodes1">
+                                    <el-tree :data="data1" show-checkbox node-key="id" ref="tree" :props="defaultProps1"
+                                        @check="getHalfCheckedNodes1">
                                     </el-tree>
                                     <div class="el-dialog__footer">
                                         <span class="dialog-footer">
@@ -132,11 +132,17 @@
                         label: '角色名称',
                         prop: 'roleName',
                         search: true,
+                        rules: [
+                            { required: true, message: '角色名称不能为空', trigger: 'blur' }
+                        ]
                     }, {
                         label: '角色标识',
                         prop: 'roleNo',
                         editDisabled: true,
                         editDisplay: false,
+                        rules: [
+                            { required: true, message: '角色标识不能为空', trigger: 'blur' }
+                        ]
                     }, {
                         label: '角色描述',
                         prop: 'remark',
@@ -149,7 +155,7 @@
                         label: '数据类型',
                         prop: 'dataType',
                         hide: true,
-                        addDisplay: true,
+                        addDisplay: false,
                         editDisplay: false,
 
                     }, {
@@ -158,6 +164,9 @@
                         type: 'select',
                         hide: true,
                         dicData: DIC.VAILD,
+                        rules: [
+                            { required: true, message: '数据权限不能为空', trigger: 'blur' }
+                        ],
                         // rules: [{ validator: validatePass, trigger: 'blur' }],
                         change: (value) => {
                             if (value.value !== "") {
@@ -184,9 +193,7 @@
                 console.log(error)
             })
             orgtree().then(res => {
-                console.log(res)
                 this.data2 = res.data.data
-
             }).catch(error => {
                 console.log(error)
             })
@@ -300,7 +307,7 @@
                 })
                 this.addshow = true
             },
-            setCheckedKeys(){
+            setCheckedKeys() {
                 console.log(this.checken)
                 this.$refs.tree.setCheckedKeys(this.checken);
             },
@@ -327,7 +334,7 @@
                 this.$notify.success({ title: title, message: value });
             },
             handleCheckChange(data, checked, indeterminate) {
-                
+
                 // console.log(data, checked, indeterminate);
             },
             handleEdit(scope) {
@@ -354,7 +361,7 @@
         width: 262px;
         height: 150px;
         /* background: pink; */
-        margin-top: -93px;
+        margin-top: -144px;
         margin-left: 128px;
         overflow: scroll
     }
