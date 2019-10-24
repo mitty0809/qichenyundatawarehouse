@@ -249,10 +249,13 @@
             preserve() {
                 orgadd(this.addform.orgNo, this.addform.name, this.addform.fullName, this.addform.orgType, this.addform.parentId, this.addform.seq).then(res => {
                     // this.addshow = false
-                    this.close() 
+                    this.close()
                     if (res.data.code === 0) {
                         this.getTree()
                         this.hint('添加', '添加机构成功')
+                        this.$router.push({
+                            path: "/info/organization",
+                        });
                     }
                 }).catch(error => {
                     this.hint('添加', '添加机构失败')
@@ -261,12 +264,12 @@
             // 关闭添加弹窗
             close() {
                 this.addshow = false
-                this.addform.parentId=0
-                this.addform.orgNo='',
-                this.addform.fullName='',
-                this.addform.name=''
-                this.addform.orgType=''
-                this.addform.seq=''
+                this.addform.parentId = 0
+                this.addform.orgNo = '',
+                    this.addform.fullName = '',
+                    this.addform.name = ''
+                this.addform.orgType = ''
+                this.addform.seq = ''
             },
             // 修改机构信息
             renewal() {
